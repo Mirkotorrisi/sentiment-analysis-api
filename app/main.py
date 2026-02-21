@@ -20,7 +20,15 @@ app.mount("/metrics", metrics_app)
 async def track_request_latency(request: Request, call_next):
     if request.url.path == "/predict":
         start = time.perf_counter()
-        response = await call_next(request)
+        try:
+            response = await call_next(request)
+        except Exception:
+            elapsed = time.perf_counter() - start
+            prediction_latency_seconds.observe(elapsed)
+            return JSONResponse(
+                status_code=500,
+                content={"detail": "An internal server error occurred during model inference."},
+            )
         elapsed = time.perf_counter() - start
         prediction_latency_seconds.observe(elapsed)
         return response

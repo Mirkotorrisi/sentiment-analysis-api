@@ -24,6 +24,10 @@ Thumbs.db
 .pytest_cache/
 .cache/
 
+# Coverage reports
+.coverage
+htmlcov/
+
 # Distribution / packaging
 dist/
 build/
