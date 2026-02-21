@@ -1,4 +1,5 @@
 import time
+from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
@@ -6,8 +7,17 @@ from prometheus_client import make_asgi_app
 
 from app.api.routes import router
 from app.core.metrics import prediction_latency_seconds
+from app.core.model import load_model
 
-app = FastAPI(title="Sentiment Analysis API", version="1.0.0")
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    """Load the sentiment model exactly once during application startup."""
+    load_model()
+    yield
+
+
+app = FastAPI(title="Sentiment Analysis API", version="1.0.0", lifespan=lifespan)
 
 app.include_router(router)
 

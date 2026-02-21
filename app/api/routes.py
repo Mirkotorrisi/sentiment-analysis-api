@@ -1,7 +1,7 @@
 from fastapi import APIRouter
 from pydantic import BaseModel, Field, field_validator
 
-from app.core.metrics import prediction_requests_total
+from app.core.metrics import prediction_requests_total, sentiment_results_total
 from app.core.model import sentiment_model
 
 router = APIRouter()
@@ -30,6 +30,7 @@ class PredictResponse(BaseModel):
 def predict_sentiment(request: PredictRequest):
     result = sentiment_model.predict(request.review)
     prediction_requests_total.labels(sentiment=result["sentiment"]).inc()
+    sentiment_results_total.labels(sentiment_type=result["sentiment"]).inc()
     return PredictResponse(
         sentiment=result["sentiment"],
         confidence=result["confidence"],

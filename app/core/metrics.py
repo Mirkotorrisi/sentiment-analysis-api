@@ -6,6 +6,12 @@ prediction_requests_total = Counter(
     ["sentiment"],
 )
 
+sentiment_results_total = Counter(
+    "sentiment_results_total",
+    "Total prediction results broken down by sentiment type",
+    ["sentiment_type"],
+)
+
 prediction_latency_seconds = Histogram(
     "prediction_latency_seconds",
     "Time taken to process a prediction request in seconds",

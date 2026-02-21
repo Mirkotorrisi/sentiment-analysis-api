@@ -1,7 +1,7 @@
 version: "3.9"
 
 networks:
-  app-network:
+  monitoring_network:
     driver: bridge
 
 services:
@@ -13,7 +13,7 @@ services:
     volumes:
       - ./models:/app/models
     networks:
-      - app-network
+      - monitoring_network
     healthcheck:
       test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
       interval: 30s
@@ -28,7 +28,10 @@ services:
     volumes:
       - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
     networks:
-      - app-network
+      - monitoring_network
+    depends_on:
+      api:
+        condition: service_healthy
 
   grafana:
     image: grafana/grafana:latest
@@ -41,6 +44,6 @@ services:
       - ./grafana/provisioning:/etc/grafana/provisioning
       - ./grafana/dashboards:/var/lib/grafana/dashboards
     networks:
-      - app-network
+      - monitoring_network
     depends_on:
       - prometheus
