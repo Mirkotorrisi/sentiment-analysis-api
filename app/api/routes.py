@@ -1,29 +1,37 @@
 from fastapi import APIRouter
-from pydantic import BaseModel
-from app.core.model import model
+from pydantic import BaseModel, field_validator
+
+from app.core.metrics import prediction_requests_total
+from app.core.model import sentiment_model
 
 router = APIRouter()
 
-
-class SentimentRequest(BaseModel):
-    text: str
+API_VERSION = "1.0.0"
 
 
-class SentimentResponse(BaseModel):
-    text: str
+class PredictRequest(BaseModel):
+    review: str
+
+    @field_validator("review")
+    @classmethod
+    def review_must_not_be_empty(cls, v: str) -> str:
+        if not v.strip():
+            raise ValueError("review must not be empty")
+        return v
+
+
+class PredictResponse(BaseModel):
     sentiment: str
     confidence: float
+    version: str
 
 
-@router.post("/predict", response_model=SentimentResponse)
-def predict_sentiment(request: SentimentRequest):
-    probabilities = model.predict_proba([request.text])[0]
-    classes = model.classes_
-    top_index = int(probabilities.argmax())
-    prediction = classes[top_index]
-    confidence = float(probabilities[top_index])
-    return SentimentResponse(
-        text=request.text,
-        sentiment=str(prediction),
-        confidence=confidence,
+@router.post("/predict", response_model=PredictResponse)
+def predict_sentiment(request: PredictRequest):
+    result = sentiment_model.predict(request.review)
+    prediction_requests_total.labels(sentiment=result["sentiment"]).inc()
+    return PredictResponse(
+        sentiment=result["sentiment"],
+        confidence=result["confidence"],
+        version=API_VERSION,
     )
