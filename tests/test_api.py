@@ -196,3 +196,26 @@ def test_predict_records_positive_latency():
     )
     assert latency_sum > 0, "Recorded latency should be a positive number"
 
+
+def test_sentiment_results_total_increments_with_sentiment_type():
+    """Calling /predict should increment sentiment_results_total with the correct sentiment_type label."""
+    from app.core.metrics import sentiment_results_total
+
+    before = sum(
+        sample.value
+        for metric in sentiment_results_total.collect()
+        for sample in metric.samples
+        if sample.name == "sentiment_results_total"
+    )
+
+    client.post("/predict", json={"review": "I absolutely love this product!"})
+
+    after = sum(
+        sample.value
+        for metric in sentiment_results_total.collect()
+        for sample in metric.samples
+        if sample.name == "sentiment_results_total"
+    )
+
+    assert after == before + 1, "sentiment_results_total should increase by 1 after a /predict call"
+

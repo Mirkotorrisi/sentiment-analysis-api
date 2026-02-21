@@ -41,4 +41,10 @@ class SentimentModel:
         confidence = float(probabilities[top_index])
         return {"sentiment": sentiment, "confidence": confidence}
 
+
 sentiment_model = SentimentModel()
+
+
+def load_model() -> SentimentModel:
+    """Load the sentiment model exactly once; returns the singleton instance."""
+    return sentiment_model

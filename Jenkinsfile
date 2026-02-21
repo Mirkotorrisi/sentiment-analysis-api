@@ -13,6 +13,17 @@ pipeline {
             }
         }
 
+        stage('Static Analysis') {
+            steps {
+                sh '''
+                    python -m venv .venv
+                    . .venv/bin/activate
+                    pip install --quiet flake8
+                    flake8 app/ tests/ --max-line-length=120
+                '''
+            }
+        }
+
         stage('Lint & Unit Tests') {
             steps {
                 sh '''
@@ -41,6 +52,9 @@ pipeline {
     }
 
     post {
+        always {
+            sh 'docker system prune -f'
+        }
         success {
             echo "Pipeline succeeded – image ${IMAGE_NAME}:${IMAGE_TAG} deployed."
         }

@@ -214,6 +214,37 @@ Set `IMAGE_NAME` and `IMAGE_TAG` as Jenkins environment variables to control the
 
 ---
 
+## Troubleshooting
+
+### Check container logs
+
+If the pipeline fails or a service is unresponsive, inspect the container logs:
+
+```bash
+# API container logs
+docker logs sentiment-analysis-api
+
+# Prometheus container logs
+docker logs $(docker-compose ps -q prometheus)
+
+# Grafana container logs
+docker logs $(docker-compose ps -q grafana)
+
+# Follow logs in real-time (Ctrl+C to stop)
+docker logs -f sentiment-analysis-api
+```
+
+### Common issues
+
+| Symptom | Likely cause | Fix |
+|---------|-------------|-----|
+| `500` on `/predict` | Model file missing | Run `bash scripts/download_model.sh` |
+| Prometheus shows no targets | API not reachable | Check `docker-compose ps`; verify `api` service is healthy |
+| Grafana shows "No data" | Datasource misconfigured | Verify Prometheus datasource URL is `http://prometheus:9090` |
+| `No space left on device` on Jenkins | Stale Docker layers | Run `docker system prune -f` on the runner |
+
+---
+
 ## Project Structure
 
 ```
