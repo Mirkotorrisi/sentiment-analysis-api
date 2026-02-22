@@ -3,7 +3,7 @@ import pickle
 
 from app.core.metrics import model_load_status
 
-MODEL_PATH = os.path.join(os.path.dirname(__file__), "../../models/sentiment_model.pkl")
+MODEL_PATH = os.path.join(os.path.dirname(__file__), "../../models/sentiment_analysis_model.pkl")
 
 
 class SentimentModel:

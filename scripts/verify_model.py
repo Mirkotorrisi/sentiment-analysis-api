@@ -4,7 +4,7 @@ import os
 import pickle
 import sys
 
-MODEL_PATH = os.path.join(os.path.dirname(__file__), "../models/sentiment_model.pkl")
+MODEL_PATH = os.path.join(os.path.dirname(__file__), "../models/sentiment_analysis_model.pkl")
 
 
 def verify_model():

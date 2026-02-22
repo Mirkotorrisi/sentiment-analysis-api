@@ -260,7 +260,7 @@ sentiment-analysis-api/
 │   ├── dashboards/            # Pre-built Grafana dashboard JSON
 │   └── provisioning/          # Auto-provisioned datasource & dashboard
 ├── models/
-│   └── sentiment_model.pkl    # Trained scikit-learn pipeline
+│   └── sentiment_analysis_model.pkl    # Trained scikit-learn pipeline
 ├── scripts/
 │   ├── download_model.sh      # Generate/download the model artifact
 │   └── verify_model.py        # Smoke-test the model file

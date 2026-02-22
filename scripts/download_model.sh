@@ -5,7 +5,7 @@
 set -e
 
 MODELS_DIR="$(dirname "$0")/../models"
-MODEL_FILE="$MODELS_DIR/sentiment_model.pkl"
+MODEL_FILE="$MODELS_DIR/sentiment_analysis_model.pkl"
 
 mkdir -p "$MODELS_DIR"
 
@@ -35,7 +35,7 @@ pipeline = Pipeline([
 ])
 pipeline.fit(texts, labels)
 
-model_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "../models/sentiment_model.pkl")
+model_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "../models/sentiment_analysis_model.pkl")
 with open(model_path, "wb") as f:
     pickle.dump(pipeline, f)
 print(f"Model saved to {model_path}")
